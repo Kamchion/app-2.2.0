@@ -96,6 +96,32 @@ export async function removeFromCart(productId: string): Promise<CartItem[]> {
 }
 
 /**
+ * Actualiza customText y customSelect de un producto en el carrito
+ */
+export async function updateCartItemCustomFields(
+  productId: string,
+  customText?: string,
+  customSelect?: string
+): Promise<CartItem[]> {
+  const cart = await getCart();
+  
+  const index = cart.findIndex((item) => item.product.id === productId);
+
+  if (index >= 0) {
+    // Actualizar campos personalizados
+    if (customText !== undefined) {
+      cart[index].customText = customText;
+    }
+    if (customSelect !== undefined) {
+      cart[index].customSelect = customSelect;
+    }
+  }
+
+  await saveCart(cart);
+  return cart;
+}
+
+/**
  * Limpia el carrito
  */
 export async function clearCart(): Promise<void> {

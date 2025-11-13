@@ -20,7 +20,7 @@ import { syncCatalog, checkConnection } from '../services/sync';
 import { getCachedImagePath } from '../services/imageCache';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Ionicons } from '@expo/vector-icons';
-import { addToCart, removeFromCart } from '../services/cart';
+import { addToCart, removeFromCart, updateCartItemCustomFields } from '../services/cart';
 
 // Función para calcular número de columnas según tamaño de pantalla
 const getNumColumns = () => {
@@ -307,7 +307,7 @@ const ProductCard = React.memo(({ item, navigation, priceType, onAddToCart }: { 
       case 'price':
         return (
           <Text key={index} style={[styles.productPrice, textStyle]}>
-            ${formatPrice(value)}
+            {formatPrice(value)}
           </Text>
         );
       
@@ -423,6 +423,15 @@ const ProductCard = React.memo(({ item, navigation, priceType, onAddToCart }: { 
         price: displayPrice.toString(),
       };
       
+      // 🐛 DEBUG: Verificar valores de customText y customSelect
+      console.log('🛒 Agregando al carrito:', {
+        productId: item.id,
+        productName: item.name,
+        quantity: qtyToAdd,
+        customText: customText,
+        customSelect: customSelect,
+      });
+      
       await addToCart(productWithPrice, qtyToAdd, customText, customSelect);
       // NO resetear cantidad - mantener el valor para que el usuario vea cuánto agregó
       // setQuantity(0); // Comentado: ahora la cantidad persiste
@@ -499,9 +508,13 @@ const ProductCard = React.memo(({ item, navigation, priceType, onAddToCart }: { 
                 </TouchableOpacity>
                 <TouchableOpacity
                   style={[styles.customTextModalButton, styles.customTextModalButtonConfirm]}
-                  onPress={() => {
+                  onPress={async () => {
                     setCustomText(tempCustomText);
                     setShowCustomTextModal(false);
+                    // Actualizar el carrito si el producto ya está agregado
+                    if (quantity > 0) {
+                      await updateCartItemCustomFields(item.id, tempCustomText, undefined);
+                    }
                   }}
                 >
                   <Text style={[styles.customTextModalButtonText, styles.customTextModalButtonTextConfirm]}>Aceptar</Text>
@@ -657,7 +670,13 @@ const ProductCard = React.memo(({ item, navigation, priceType, onAddToCart }: { 
                 <View style={styles.customSelectCompact}>
                   <Picker
                     selectedValue={customSelect}
-                    onValueChange={(itemValue) => setCustomSelect(itemValue)}
+                    onValueChange={async (itemValue) => {
+                      setCustomSelect(itemValue);
+                      // Actualizar el carrito si el producto ya está agregado
+                      if (quantity > 0) {
+                        await updateCartItemCustomFields(item.id, undefined, itemValue);
+                      }
+                    }}
                     style={styles.pickerStyle}
                   >
                     <Picker.Item label="Select" value="" />
@@ -1492,7 +1511,7 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
   },
   productName: {
-    fontSize: 14,
+    fontSize: 10,
     fontWeight: '600',
     color: '#111827',
     marginBottom: 4,
@@ -1531,9 +1550,9 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   productPrice: {
-    fontSize: 16,
+    fontSize: 14,
     fontWeight: 'bold',
-    color: '#059669',
+    color: '#2563eb',
   },
   productStock: {
     fontSize: 11,
