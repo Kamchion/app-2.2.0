@@ -606,7 +606,27 @@ const ProductCard = React.memo(({ item, navigation, priceType, onAddToCart }: { 
         <View style={styles.productInfo}>
           {productFields.length > 0 ? (
             // Renderizar campos dinámicos según configuración
-            productFields.map((field, index) => renderDynamicField(field, index))
+            <>
+              {productFields.map((field, index) => {
+                // Agrupar unitsPerBox y stock en una fila
+                if (field.field === 'unitsPerBox') {
+                  const stockField = productFields.find(f => f.field === 'stock');
+                  if (stockField) {
+                    return (
+                      <View key={index} style={styles.boxStockRow}>
+                        <Text style={styles.boxStockText}>Box: {item.unitsPerBox || 0}</Text>
+                        <Text style={styles.boxStockText}>{item.stock || 0} stock</Text>
+                      </View>
+                    );
+                  }
+                }
+                // Saltar el campo stock si ya fue renderizado con unitsPerBox
+                if (field.field === 'stock' && productFields.some(f => f.field === 'unitsPerBox')) {
+                  return null;
+                }
+                return renderDynamicField(field, index);
+              })}
+            </>
           ) : (
             // Fallback: mostrar campos por defecto si no hay configuración
             <>
@@ -1519,6 +1539,15 @@ const styles = StyleSheet.create({
     fontSize: 11,
     color: '#6b7280',
   },
+  boxStockRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginBottom: 4,
+  },
+  boxStockText: {
+    fontSize: 11,
+    color: '#6b7280',
+  },
   fieldText: {
     fontSize: 12,
     color: '#1e293b',
@@ -1823,12 +1852,14 @@ const styles = StyleSheet.create({
   },
   customTextCompact: {
     flex: 1,
+    height: 28,
     borderWidth: 1,
     borderColor: '#d1d5db',
     borderRadius: 4,
     paddingHorizontal: 8,
-    paddingVertical: 6,
+    paddingVertical: 4,
     backgroundColor: '#ffffff',
+    justifyContent: 'center',
   },
   customTextPlaceholder: {
     fontSize: 12,
@@ -1836,14 +1867,16 @@ const styles = StyleSheet.create({
   },
   customSelectCompact: {
     flex: 1,
+    height: 28,
     borderWidth: 1,
     borderColor: '#d1d5db',
     borderRadius: 4,
     backgroundColor: '#ffffff',
     overflow: 'hidden',
+    justifyContent: 'center',
   },
   pickerStyle: {
-    height: 32,
+    height: 28,
     fontSize: 12,
   },
   customTextModalOverlay: {
