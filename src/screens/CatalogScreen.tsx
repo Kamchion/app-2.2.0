@@ -1264,6 +1264,8 @@ const styles = StyleSheet.create({
     shadowRadius: 4,
     elevation: 3,
     overflow: 'hidden',
+    display: 'flex',
+    flexDirection: 'column',
   },
   productImage: {
     width: '100%',
@@ -1283,6 +1285,10 @@ const styles = StyleSheet.create({
   },
   productInfo: {
     padding: 12,
+    flex: 1,
+    display: 'flex',
+    flexDirection: 'column',
+    justifyContent: 'space-between',
   },
   productName: {
     fontSize: 14,
