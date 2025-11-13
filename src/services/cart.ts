@@ -37,7 +37,9 @@ async function saveCart(cart: CartItem[]): Promise<void> {
  */
 export async function addToCart(
   product: Product,
-  quantity: number
+  quantity: number,
+  customText?: string,
+  customSelect?: string
 ): Promise<CartItem[]> {
   const cart = await getCart();
   
@@ -47,9 +49,11 @@ export async function addToCart(
   if (existingIndex >= 0) {
     // Reemplazar cantidad (no sumar)
     cart[existingIndex].quantity = quantity;
+    cart[existingIndex].customText = customText;
+    cart[existingIndex].customSelect = customSelect;
   } else {
     // Agregar nuevo item
-    cart.push({ product, quantity });
+    cart.push({ product, quantity, customText, customSelect });
   }
 
   await saveCart(cart);

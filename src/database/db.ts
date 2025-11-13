@@ -6,7 +6,7 @@ import * as SQLite from 'expo-sqlite';
  */
 
 const DB_NAME = 'vendedor_offline.db';
-const DB_VERSION = 4; // Incrementar cuando hay cambios en el esquema
+const DB_VERSION = 5; // Incrementar cuando hay cambios en el esquema
 
 let db: SQLite.SQLiteDatabase | null = null;
 
@@ -203,6 +203,8 @@ export async function initDatabase(): Promise<void> {
         fontSize TEXT,
         fontWeight TEXT,
         textAlign TEXT,
+        options TEXT,
+        maxLength INTEGER,
         syncedAt TEXT NOT NULL
       );
     `);
@@ -578,6 +580,29 @@ async function migrateDatabase(database: SQLite.SQLiteDatabase): Promise<void> {
         console.log('✅ Migración v4 completada');
       }
 
+      // Migración v5: Agregar columnas options y maxLength a product_fields
+      if (currentVersion < 5) {
+        console.log('🔄 Aplicando migración v5: Agregando columnas options y maxLength a product_fields...');
+        
+        try {
+          await database.execAsync(`
+            ALTER TABLE product_fields ADD COLUMN options TEXT;
+          `);
+        } catch (e) {
+          // La columna ya existe, ignorar
+        }
+
+        try {
+          await database.execAsync(`
+            ALTER TABLE product_fields ADD COLUMN maxLength INTEGER;
+          `);
+        } catch (e) {
+          // La columna ya existe, ignorar
+        }
+
+        console.log('✅ Migración v5 completada');
+      }
+
       // Actualizar versión en config
       await database.execAsync(
         'INSERT OR REPLACE INTO config (key, value) VALUES (?, ?)',
@@ -670,8 +695,8 @@ export async function syncProductFields(fields: any[]): Promise<void> {
     // Insertar nuevos campos
     for (const field of fields) {
       await database.runAsync(
-        `INSERT INTO product_fields (field, label, enabled, "order", displayType, "column", textColor, fontSize, fontWeight, textAlign, syncedAt)
-         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+        `INSERT INTO product_fields (field, label, enabled, "order", displayType, "column", textColor, fontSize, fontWeight, textAlign, options, maxLength, syncedAt)
+         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
         [
           field.field,
           field.label,
@@ -683,6 +708,8 @@ export async function syncProductFields(fields: any[]): Promise<void> {
           field.fontSize || null,
           field.fontWeight || null,
           field.textAlign || null,
+          field.options ? JSON.stringify(field.options) : null,
+          field.maxLength || null,
           new Date().toISOString()
         ]
       );
@@ -703,7 +730,7 @@ export async function getProductFields(): Promise<any[]> {
   
   try {
     const fields = await database.getAllAsync<any>(
-      `SELECT field, label, enabled, "order", displayType, "column", textColor, fontSize, fontWeight, textAlign
+      `SELECT field, label, enabled, "order", displayType, "column", textColor, fontSize, fontWeight, textAlign, options, maxLength
        FROM product_fields
        WHERE enabled = 1
        ORDER BY "order" ASC`
@@ -720,6 +747,8 @@ export async function getProductFields(): Promise<any[]> {
       fontSize: field.fontSize,
       fontWeight: field.fontWeight,
       textAlign: field.textAlign,
+      options: field.options ? JSON.parse(field.options) : undefined,
+      maxLength: field.maxLength,
     }));
   } catch (error) {
     console.error('❌ Error al obtener campos de producto:', error);

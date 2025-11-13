@@ -251,6 +251,8 @@ export async function uploadPendingOrders(
       productId: string;
       quantity: number;
       pricePerUnit: string;
+      customText?: string;
+      customSelect?: string;
     }>;
     createdAtOffline: string;
   }>

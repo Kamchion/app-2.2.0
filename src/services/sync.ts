@@ -422,6 +422,8 @@ export async function syncPendingOrders(
             productId: item.productId,
             quantity: item.quantity,
             pricePerUnit: item.pricePerUnit,
+            customText: item.customText,
+            customSelect: item.customSelect,
           })),
           createdAtOffline: order.createdAt,
         };
@@ -574,6 +576,8 @@ export async function syncSingleOrder(
         productId: item.productId,
         quantity: item.quantity,
         pricePerUnit: item.pricePerUnit,
+        customText: item.customText,
+        customSelect: item.customSelect,
       })),
       createdAtOffline: order.createdAt,
     };

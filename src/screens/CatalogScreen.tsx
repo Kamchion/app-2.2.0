@@ -154,6 +154,9 @@ const ProductCard = React.memo(({ item, navigation, priceType, onAddToCart }: { 
   // Estados para configuración dinámica de campos
   const [productFields, setProductFields] = useState<any[]>([]);
   const [cardStyles, setCardStyles] = useState<any>(null);
+  // Estados para campos personalizados
+  const [customText, setCustomText] = useState('');
+  const [customSelect, setCustomSelect] = useState('');
   
   // Calcular precio según tipo de cliente usando la utilidad
   const displayPrice = getProductPrice(item, (priceType as PriceType) || 'ciudad');
@@ -172,12 +175,17 @@ const ProductCard = React.memo(({ item, navigation, priceType, onAddToCart }: { 
     try {
       const db = getDatabase();
       const fields = await db.getAllAsync<any>(
-        `SELECT field, label, enabled, "order", displayType, "column", textColor, fontSize, fontWeight, textAlign
+        `SELECT field, label, enabled, "order", displayType, "column", textColor, fontSize, fontWeight, textAlign, options, maxLength
          FROM product_fields
          WHERE enabled = 1
          ORDER BY "order" ASC`
       );
-      setProductFields(fields);
+      // Parsear options de JSON string a array
+      const parsedFields = fields.map(f => ({
+        ...f,
+        options: f.options ? JSON.parse(f.options) : undefined
+      }));
+      setProductFields(parsedFields);
       
       const styles = await db.getFirstAsync<any>(
         'SELECT marginTop, marginBottom, marginLeft, marginRight, imageSpacing, fieldSpacing FROM card_styles WHERE id = 1'
@@ -275,6 +283,48 @@ const ProductCard = React.memo(({ item, navigation, priceType, onAddToCart }: { 
     // Manejar campo de precio especial
     if (field.field === 'rolePrice' || field.field === 'price') {
       value = displayPrice;
+    }
+
+    // Manejar campos personalizados editables
+    if (field.field === 'customText') {
+      return (
+        <TextInput
+          key={index}
+          value={customText}
+          onChangeText={setCustomText}
+          placeholder="Texto"
+          maxLength={field.maxLength || 8}
+          style={styles.customTextInput}
+        />
+      );
+    }
+
+    if (field.field === 'customSelect') {
+      const options = field.options || [];
+      return (
+        <View key={index} style={styles.customSelectContainer}>
+          <Text style={styles.customSelectLabel}>Seleccionar:</Text>
+          <View style={styles.customSelectButtons}>
+            {options.map((opt: string) => (
+              <TouchableOpacity
+                key={opt}
+                style={[
+                  styles.customSelectButton,
+                  customSelect === opt && styles.customSelectButtonActive
+                ]}
+                onPress={() => setCustomSelect(opt)}
+              >
+                <Text style={[
+                  styles.customSelectButtonText,
+                  customSelect === opt && styles.customSelectButtonTextActive
+                ]}>
+                  {opt}
+                </Text>
+              </TouchableOpacity>
+            ))}
+          </View>
+        </View>
+      );
     }
 
     if (!value && value !== 0) return null;
@@ -406,7 +456,7 @@ const ProductCard = React.memo(({ item, navigation, priceType, onAddToCart }: { 
         price: displayPrice.toString(),
       };
       
-      await addToCart(productWithPrice, qtyToAdd);
+      await addToCart(productWithPrice, qtyToAdd, customText, customSelect);
       // NO resetear cantidad - mantener el valor para que el usuario vea cuánto agregó
       // setQuantity(0); // Comentado: ahora la cantidad persiste
       if (onAddToCart) onAddToCart();
@@ -1725,6 +1775,49 @@ const styles = StyleSheet.create({
   variantsAddAllButtonText: {
     color: '#ffffff',
     fontSize: 16,
+    fontWeight: '600',
+  },
+  customTextInput: {
+    borderWidth: 1,
+    borderColor: '#d1d5db',
+    borderRadius: 6,
+    paddingHorizontal: 8,
+    paddingVertical: 6,
+    fontSize: 12,
+    backgroundColor: '#ffffff',
+    marginVertical: 4,
+  },
+  customSelectContainer: {
+    marginVertical: 4,
+  },
+  customSelectLabel: {
+    fontSize: 11,
+    color: '#6b7280',
+    marginBottom: 4,
+  },
+  customSelectButtons: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: 6,
+  },
+  customSelectButton: {
+    paddingHorizontal: 10,
+    paddingVertical: 5,
+    borderRadius: 4,
+    borderWidth: 1,
+    borderColor: '#d1d5db',
+    backgroundColor: '#ffffff',
+  },
+  customSelectButtonActive: {
+    backgroundColor: '#3b82f6',
+    borderColor: '#3b82f6',
+  },
+  customSelectButtonText: {
+    fontSize: 10,
+    color: '#6b7280',
+  },
+  customSelectButtonTextActive: {
+    color: '#ffffff',
     fontWeight: '600',
   },
 });

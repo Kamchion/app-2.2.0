@@ -250,8 +250,8 @@ export default function CartScreen({ navigation }: CartScreenProps) {
                 for (const item of cart) {
                   const itemId = `${orderId}-${item.product.id}`;
                   await db.runAsync(
-                    `INSERT INTO pending_order_items (id, orderId, productId, productName, quantity, pricePerUnit, subtotal) VALUES (?, ?, ?, ?, ?, ?, ?)`,
-                    [itemId, orderId, item.product.id, item.product.name, item.quantity, item.product.price, (parseFloat(item.product.price) * item.quantity).toString()]
+                    `INSERT INTO pending_order_items (id, orderId, productId, productName, quantity, pricePerUnit, subtotal, customText, customSelect) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+                    [itemId, orderId, item.product.id, item.product.name, item.quantity, item.product.price, (parseFloat(item.product.price) * item.quantity).toString(), item.customText || null, item.customSelect || null]
                   );
                 }
               } else {
@@ -269,8 +269,8 @@ export default function CartScreen({ navigation }: CartScreenProps) {
                 for (const item of cart) {
                   const itemId = `${orderId}-${item.product.id}`;
                   await db.runAsync(
-                    `INSERT INTO pending_order_items (id, orderId, productId, productName, quantity, pricePerUnit, subtotal) VALUES (?, ?, ?, ?, ?, ?, ?)`,
-                    [itemId, orderId, item.product.id, item.product.name, item.quantity, item.product.price, (parseFloat(item.product.price) * item.quantity).toString()]
+                    `INSERT INTO pending_order_items (id, orderId, productId, productName, quantity, pricePerUnit, subtotal, customText, customSelect) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+                    [itemId, orderId, item.product.id, item.product.name, item.quantity, item.product.price, (parseFloat(item.product.price) * item.quantity).toString(), item.customText || null, item.customSelect || null]
                   );
                 }
               }
@@ -387,8 +387,8 @@ export default function CartScreen({ navigation }: CartScreenProps) {
                 for (const item of cart) {
                   const itemId = `${orderId}-${item.product.id}`;
                   await db.runAsync(
-                    `INSERT INTO pending_order_items (id, orderId, productId, productName, quantity, pricePerUnit, subtotal) VALUES (?, ?, ?, ?, ?, ?, ?)`,
-                    [itemId, orderId, item.product.id, item.product.name, item.quantity, item.product.price, (parseFloat(item.product.price) * item.quantity).toString()]
+                    `INSERT INTO pending_order_items (id, orderId, productId, productName, quantity, pricePerUnit, subtotal, customText, customSelect) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+                    [itemId, orderId, item.product.id, item.product.name, item.quantity, item.product.price, (parseFloat(item.product.price) * item.quantity).toString(), item.customText || null, item.customSelect || null]
                   );
                 }
 
