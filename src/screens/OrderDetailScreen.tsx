@@ -429,12 +429,12 @@ export default function OrderDetailScreen() {
           <View key={index} style={styles.itemCard}>
             <View style={styles.itemHeader}>
               <Text style={styles.itemName}>{item.productName}</Text>
-              <Text style={styles.itemSubtotal}>${item.subtotal.toFixed(2)}</Text>
+              <Text style={styles.itemSubtotal}>{item.subtotal.toFixed(2)}</Text>
             </View>
             <Text style={styles.itemSku}>SKU: {item.productSku}</Text>
             <View style={styles.itemFooter}>
               <Text style={styles.itemQuantity}>Cantidad: {item.quantity}</Text>
-              <Text style={styles.itemPrice}>Precio: ${item.price.toFixed(2)}</Text>
+              <Text style={styles.itemPrice}>Precio: {item.price.toFixed(2)}</Text>
             </View>
           </View>
         ))}
@@ -445,15 +445,15 @@ export default function OrderDetailScreen() {
         <Text style={styles.sectionTitle}>Resumen</Text>
         <View style={styles.summaryRow}>
           <Text style={styles.summaryLabel}>Subtotal:</Text>
-          <Text style={styles.summaryValue}>${orderDetail.subtotal.toFixed(2)}</Text>
+          <Text style={styles.summaryValue}>{orderDetail.subtotal.toFixed(2)}</Text>
         </View>
         <View style={styles.summaryRow}>
           <Text style={styles.summaryLabel}>Impuestos:</Text>
-          <Text style={styles.summaryValue}>${orderDetail.tax.toFixed(2)}</Text>
+          <Text style={styles.summaryValue}>{orderDetail.tax.toFixed(2)}</Text>
         </View>
         <View style={[styles.summaryRow, styles.totalRow]}>
           <Text style={styles.totalLabel}>Total:</Text>
-          <Text style={styles.totalValue}>${orderDetail.total.toFixed(2)}</Text>
+          <Text style={styles.totalValue}>{orderDetail.total.toFixed(2)}</Text>
         </View>
       </View>
 

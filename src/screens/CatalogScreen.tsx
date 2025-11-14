@@ -110,7 +110,7 @@ const VariantItem = ({
       <View style={styles.variantInfo}>
         <Text style={styles.variantName}>{variant.variantName || variant.name}</Text>
         <Text style={styles.variantSku}>SKU: {variant.sku}</Text>
-        <Text style={styles.variantPrice}>${displayPrice}</Text>
+        <Text style={styles.variantPrice}>{displayPrice}</Text>
         <Text style={styles.variantStock}>Stock: {variant.stock || 0}</Text>
       </View>
       <View style={styles.variantControls}>
@@ -645,7 +645,7 @@ const ProductCard = React.memo(({ item, navigation, priceType, onAddToCart }: { 
             <>
               <Text style={styles.productName} numberOfLines={2}>{item.name}</Text>
               <Text style={styles.productSku}>SKU: {item.sku}</Text>
-              <Text style={styles.productPrice}>${displayPrice || '0.00'}</Text>
+              <Text style={styles.productPrice}>{displayPrice || '0.00'}</Text>
               <Text style={styles.productStock}>Stock: {item.stock || 0}</Text>
             </>
           )}
@@ -1089,7 +1089,7 @@ export default function CatalogScreen({ navigation }: CatalogScreenProps) {
         <View style={styles.topBarRight}>
           <View style={styles.topBarCartInfo}>
             <Text style={styles.topBarCartText}>{cartCount.lines} líneas</Text>
-            <Text style={styles.topBarCartText}>${cartTotal}</Text>
+            <Text style={styles.topBarCartText}>{cartTotal}</Text>
           </View>
           <TouchableOpacity
             style={styles.topBarCartButton}

@@ -145,10 +145,10 @@ export default function OrdersScreen({ navigation }: OrdersScreenProps) {
       console.log('📝 Items encontrados:', items.length);
       
       const itemsText = items.map(i => 
-        `${i.productName || 'Producto'} (${i.sku})\n  Cantidad: ${i.quantity} x $${i.pricePerUnit} = $${(i.quantity * parseFloat(i.pricePerUnit)).toFixed(2)}`
+        `${i.productName || 'Producto'} (${i.sku})\n  Cantidad: ${i.quantity} x ${i.pricePerUnit} = ${(i.quantity * parseFloat(i.pricePerUnit)).toFixed(2)}`
       ).join('\n\n');
       
-      const detailText = `Pedido #${item.id.slice(-8)}\nCliente: ${item.customerName}\nTotal: $${item.total}\n\nProductos:\n${itemsText}\n\n¿Qué deseas hacer?`;
+      const detailText = `Pedido #${item.id.slice(-8)}\nCliente: ${item.customerName}\nTotal: ${item.total}\n\nProductos:\n${itemsText}\n\n¿Qué deseas hacer?`;
       
       // Mostrar acciones solo para borradores y pendientes
       if (item.status === 'draft') {
@@ -391,7 +391,7 @@ export default function OrdersScreen({ navigation }: OrdersScreenProps) {
 
         <View style={styles.orderFooter}>
           <Text style={styles.totalLabel}>Total:</Text>
-          <Text style={styles.totalValue}>${parseFloat(item.total).toFixed(2)}</Text>
+          <Text style={styles.totalValue}>{parseFloat(item.total).toFixed(2)}</Text>
           <TouchableOpacity 
             style={styles.viewButton}
             onPress={handleOrderPress}

@@ -102,7 +102,7 @@ const CartItemCard = ({
 
           {/* Precio y controles */}
           <View style={styles.itemFooter}>
-            <Text style={styles.itemPrice}>${item.product.price}</Text>
+            <Text style={styles.itemPrice}>{item.product.price}</Text>
             
             {/* Controles de cantidad */}
             <View style={styles.quantityControls}>
@@ -129,7 +129,7 @@ const CartItemCard = ({
             </View>
 
             {/* Subtotal del item */}
-            <Text style={styles.itemSubtotal}>${itemSubtotal.toFixed(2)}</Text>
+            <Text style={styles.itemSubtotal}>{itemSubtotal.toFixed(2)}</Text>
           </View>
         </View>
       </View>
@@ -211,7 +211,7 @@ export default function CartScreen({ navigation }: CartScreenProps) {
 
     Alert.alert(
       'Guardar Pedido',
-      `Cliente: ${selectedClient.companyName || selectedClient.contactPerson}\nTotal: $${total.toFixed(2)}\n\n¿Deseas guardar este pedido para continuar más tarde?`,
+      `Cliente: ${selectedClient.companyName || selectedClient.contactPerson}\nTotal: ${total.toFixed(2)}\n\n¿Deseas guardar este pedido para continuar más tarde?`,
       [
         { text: 'Cancelar', style: 'cancel' },
         {
@@ -479,19 +479,19 @@ export default function CartScreen({ navigation }: CartScreenProps) {
           
           <View style={styles.summaryRow}>
             <Text style={styles.summaryLabel}>Subtotal</Text>
-            <Text style={styles.summaryValue}>${subtotal.toFixed(2)}</Text>
+            <Text style={styles.summaryValue}>{subtotal.toFixed(2)}</Text>
           </View>
 
           <View style={styles.summaryRow}>
             <Text style={styles.summaryLabel}>Impuestos (10%)</Text>
-            <Text style={styles.summaryValue}>${tax.toFixed(2)}</Text>
+            <Text style={styles.summaryValue}>{tax.toFixed(2)}</Text>
           </View>
 
           <View style={styles.summaryDivider} />
 
           <View style={styles.summaryRow}>
             <Text style={styles.summaryTotalLabel}>Total</Text>
-            <Text style={styles.summaryTotalValue}>${total.toFixed(2)}</Text>
+            <Text style={styles.summaryTotalValue}>{total.toFixed(2)}</Text>
           </View>
 
           {/* Notas del cliente */}

@@ -208,7 +208,7 @@ const DynamicProductCard = React.memo(({ item, navigation, priceType, onAddToCar
       case 'price':
         return (
           <Text style={[styles.fieldText, style, styles.priceText]}>
-            ${formatPrice(value)}
+            {formatPrice(value)}
           </Text>
         );
       
