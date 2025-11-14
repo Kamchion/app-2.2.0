@@ -184,30 +184,36 @@ const DynamicProductCard = React.memo(({ item, navigation, priceType, onAddToCar
 
     if (!value && value !== 0) return null;
 
-    // Forzar estilos específicos para name y price
-    let fontSize = parseInt(field.fontSize || '12');
-    let color = field.textColor || '#000000';
-    
-    if (field.field === 'name') {
-      fontSize = 10; // Forzar fontSize 10 para nombre
-    }
-    
-    if (field.field === 'rolePrice' || field.field === 'price') {
-      fontSize = 14; // Forzar fontSize 14 para precio
-      color = '#2563eb'; // Forzar color azul para precio
-    }
-    
+    // Crear estilos dinámicos desde BD (excepto para name y price que son forzados)
     const style = {
-      color: color,
-      fontSize: fontSize,
+      color: field.textColor || '#000000',
+      fontSize: parseInt(field.fontSize || '12'),
       fontWeight: (field.fontWeight || '400') as any,
       textAlign: (field.textAlign || 'left') as any,
     };
+    
+    // Estilos forzados para name y price (ignoran BD)
+    const nameStyle = {
+      fontSize: 10,
+      fontWeight: '600' as any,
+      color: '#1e293b',
+    };
+    
+    const priceStyle = {
+      fontSize: 14,
+      fontWeight: 'bold' as any,
+      color: '#2563eb',
+    };
+
+    // Aplicar estilos forzados para name y price
+    const finalStyle = field.field === 'name' ? nameStyle : 
+                       (field.field === 'rolePrice' || field.field === 'price') ? priceStyle : 
+                       style;
 
     switch (field.displayType) {
       case 'price':
         return (
-          <Text style={[styles.fieldText, style, styles.priceText]}>
+          <Text style={[styles.fieldText, priceStyle]}>
             {formatPrice(value)}
           </Text>
         );
@@ -244,20 +250,20 @@ const DynamicProductCard = React.memo(({ item, navigation, priceType, onAddToCar
           );
         }
         return (
-          <Text style={[styles.fieldText, style]}>
+          <Text style={[styles.fieldText, finalStyle]}>
             {field.label}: {value}
           </Text>
         );
       
       case 'multiline':
         return (
-          <Text style={[styles.fieldText, style]} numberOfLines={2}>
+          <Text style={[styles.fieldText, finalStyle]} numberOfLines={2}>
             {value}
           </Text>
         );
       
       default:
-        return <Text style={[styles.fieldText, style]}>{value}</Text>;
+        return <Text style={[styles.fieldText, finalStyle]}>{value}</Text>;
     }
   };
 
